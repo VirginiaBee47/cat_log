@@ -1,50 +1,54 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    https://shiny.posit.co/
-#
-
 library(shiny)
+library(tidyverse)
+
+# Use cat data
+proj_url = "https://raw.githubusercontent.com/VirginiaBee47/cat_log/refs/heads/main/cat_health.csv"
+download.file(url = proj_url, destfile = "cat_health.csv")
+
+kitty_data <- read_csv("cat_health.csv", skip = 2, 
+                       col_names = c("date", 
+                                     "cleopatra_weight", 
+                                     "amumu_weight")) %>%
+  mutate(date = mdy(date)) %>% 
+  pivot_longer(cols = c("cleopatra_weight", "amumu_weight"), 
+               names_to = "cat") %>%
+  separate_wider_delim(cat, delim = '_', names = c("cat", "attribute"))
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-
-    # Application title
-    titlePanel("Cat Health Tracker"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
+  
+  # Application title
+  titlePanel("Cat Health Tracker"),
+  
+  # Sidebar with a slider input for number of bins 
+  sidebarLayout(
+    sidebarPanel(
+      numericInput("y_min", "Y minimum", 
+                   value = min(kitty_data$value),
+                   min = min(kitty_data$value), max = max(kitty_data$value),
+                   step = 0.01),
+      numericInput("y_max", "Y maximum", 
+                   value = max(kitty_data$value),
+                   min = min(kitty_data$value), max = max(kitty_data$value),
+                   step = 0.01)
+    ),
+    
+    # Show a plot of the generated distribution
+    mainPanel(
+      plotOutput("weight_plot")
     )
+  )
 )
 
-# Define server logic required to draw a histogram
+# Define server logic required to draw the dashboard
 server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-    })
+  
+  output$weight_plot <- renderPlot({
+    ggplot(kitty_data, aes(x = date, y = value, color = cat)) +
+      geom_line() + 
+      coord_cartesian(ylim = c(input$y_min, input$y_max)) +
+      theme_classic()
+  })
 }
 
 # Run the application 
