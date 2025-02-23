@@ -5,14 +5,12 @@ library(tidyverse)
 proj_url = "https://raw.githubusercontent.com/VirginiaBee47/cat_log/refs/heads/main/cat_health.csv"
 download.file(url = proj_url, destfile = "cat_health.csv")
 
-kitty_data <- read_csv("cat_health.csv", skip = 2, 
+kitty_data <- read_csv("cat_health.csv", skip = 1, 
                        col_names = c("date", 
-                                     "cleopatra_weight", 
-                                     "amumu_weight")) %>%
-  mutate(date = mdy(date)) %>% 
-  pivot_longer(cols = c("cleopatra_weight", "amumu_weight"), 
-               names_to = "cat") %>%
-  separate_wider_delim(cat, delim = '_', names = c("cat", "attribute"))
+                                     "cat", 
+                                     "attribute",
+                                     "value")) %>%
+  mutate(date = mdy(date))
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
