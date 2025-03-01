@@ -13,7 +13,7 @@ if "%~1"=="" (
 )
 
 REM Execute the Python script
-PYTHON add_data.py %*
+PYTHON add_data.py %ARGS%
 
 REM Check if the Python script executed successfully
 if %ERRORLEVEL% NEQ 0 (
