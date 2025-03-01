@@ -6,7 +6,7 @@ cat_aliasing = {'cleopatra': ['c', 'cleo', 'cleopatra'],
                 'amumu': ['m', 'mumu', 'amumu']}
 
 attribute_aliasing = {'weight': ['w', 'weight', 'm', 'mass'],
-                      'injury': ['injury', 'inj']}
+                      'injury': ['injury', 'inj', 'i']}
 
 class ArgHolder:
     def __init__(self):

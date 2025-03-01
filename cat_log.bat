@@ -3,6 +3,15 @@
 PUSHD .
 CD %~dp0
 
+ECHO Run with arguments --date=ddmmyyyy cat_name[cleo, mumu] attribute[weight, injury] value
+
+REM Prompt for arguments if none are provided
+if "%~1"=="" (
+    set /p ARGS=Enter arguments: 
+) else (
+    set ARGS=%*
+)
+
 REM Execute the Python script
 PYTHON add_data.py %*
 
